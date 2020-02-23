@@ -16,11 +16,10 @@ for (name, bits, doc) in [
         (:QCFAIL,        UInt16(0x200), "QC failure"                                                                ),
         (:DUP,           UInt16(0x400), "optical or PCR duplicate"                                                  ),
         (:SUPPLEMENTARY, UInt16(0x800), "supplementary alignment"                                                   ),]
-    @assert bits isa UInt16
+    @assert bits isa UInt16 "The bits must be of type UInt16."
     sym = Symbol("FLAG_", name)
     doc = string(@sprintf("0x%04x: ", bits), doc)
     @eval begin
         @doc $(doc) const $(sym) = $(bits)
     end
 end
-
