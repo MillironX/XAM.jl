@@ -15,6 +15,22 @@ import BioGenerics: isfilled, header
 
 import GenomicFeatures: eachoverlap
 
+# Overwrite virtualoffset method as per https://github.com/BioJulia/BGZFStreams.jl/issues/22#issuecomment-874491338.
+function BGZFStreams.virtualoffset(stream::BGZFStreams.BGZFStream)
+    if stream.mode == BGZFStreams.READ_MODE
+        i = BGZFStreams.ensure_buffered_data(stream)
+        if i == 0
+            # Provide a VirtualOffset beyond the bounds of the stream.
+            block = stream.blocks[end]
+            return BGZFStreams.VirtualOffset(block.block_offset, 0) + (block.position - 1)
+        else
+            block = stream.blocks[i]
+        end
+    else
+        block = stream.blocks[1]
+    end
+    return BGZFStreams.VirtualOffset(block.block_offset, block.position - 1)
+end
 
 include("bai.jl")
 include("auxdata.jl")
