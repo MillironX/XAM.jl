@@ -21,6 +21,7 @@ function BGZFStreams.virtualoffset(stream::BGZFStreams.BGZFStream)
         i = BGZFStreams.ensure_buffered_data(stream)
         if i == 0
             block = stream.blocks[end]
+            @info "zero case" stream stream.blocks block.block_offset block.size
         else
             block = stream.blocks[i]
         end
