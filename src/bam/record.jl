@@ -91,7 +91,7 @@ function Base.empty!(record::Record)
     record.tlen       = 0
 
     #Note: data will be overwritten and indexed using data_size.
-    
+
     return record
 end
 
@@ -436,7 +436,9 @@ function alignment(record::Record)::BioAlignments.Alignment
     end
     seqpos = 0
     refpos = position(record) - 1
-    anchors = [BioAlignments.AlignmentAnchor(seqpos, refpos, BioAlignments.OP_START)]
+    alnpos = 0
+
+    anchors = [BioAlignments.AlignmentAnchor(seqpos, refpos, alnpos, BioAlignments.OP_START)]
     for (op, len) in zip(cigar_rle(record)...)
         if BioAlignments.ismatchop(op)
             seqpos += len
@@ -448,7 +450,8 @@ function alignment(record::Record)::BioAlignments.Alignment
         else
             error("operation $(op) is not supported")
         end
-        push!(anchors, BioAlignments.AlignmentAnchor(seqpos, refpos, op))
+        alnpos += len
+        push!(anchors, BioAlignments.AlignmentAnchor(seqpos, refpos, alnpos, op))
     end
     return BioAlignments.Alignment(anchors)
 end
