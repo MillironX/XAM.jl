@@ -447,6 +447,8 @@ function alignment(record::Record)::BioAlignments.Alignment
             seqpos += len
         elseif BioAlignments.isdeleteop(op)
             refpos += len
+        elseif BioAlignments.ismetaop(op)
+            # Prevent error, but don't move ref or seq pos
         else
             error("operation $(op) is not supported")
         end
